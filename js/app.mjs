@@ -139,15 +139,17 @@ function renderOverview() {
       <h2>七日行程總覽</h2>
       <p>時間為節奏參考；橘色固定事項不可延誤。點日期可回到當日詳細行程。</p>
     </section>
-    <div class="overview-table-wrap" role="region" aria-label="七日行程表" tabindex="0">
-      <table class="overview-table">
-        <thead><tr><th>項目</th>${rows.map((row, index) => `<th><button data-overview-day="${index}" aria-label="查看 ${row.date} 詳細行程"><span>${row.weekday}</span><strong>${row.date}</strong></button></th>`).join("")}</tr></thead>
-        <tbody>${matrix.sections.map((section) => `<tr>
-          <th scope="row">${section.label}</th>
-          ${section.cells.map((cell, index) => `<td>${overviewCell(section, cell, rows[index])}</td>`).join("")}
-        </tr>`).join("")}</tbody>
-      </table>
-    </div>`;
+    <section class="overview-sections" aria-label="七日行程表">
+      ${matrix.sections.map((section) => `<details class="overview-section">
+        <summary><span>${section.label}</span><b>展開</b></summary>
+        <div class="overview-section__table-wrap" role="region" aria-label="${section.label}七日內容" tabindex="0">
+          <div class="overview-section__grid">
+            ${rows.map((row, index) => `<button class="overview-section__date" data-overview-day="${index}" aria-label="查看 ${row.date} 詳細行程"><span>${row.weekday}</span><strong>${row.date}</strong></button>`).join("")}
+            ${section.cells.map((cell, index) => `<div class="overview-section__cell">${overviewCell(section, cell, rows[index])}</div>`).join("")}
+          </div>
+        </div>
+      </details>`).join("")}
+    </section>`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
