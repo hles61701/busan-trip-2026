@@ -231,7 +231,7 @@ test("the return day sends all four travelers in one charter before two flights"
   );
 });
 
-test("September 1 offers both Haeundae pork-soup restaurants with separate addresses", () => {
+test("September 1 offers all three Haeundae pork-soup restaurants with separate addresses", () => {
   const haeundaeDay = tripDays.find((day) => day.date === "9/1");
 
   assert.deepEqual(
@@ -239,6 +239,7 @@ test("September 1 offers both Haeundae pork-soup restaurants with separate addre
     [
       ["海雲台五福豬肉湯飯", "해운대 오복돼지국밥", "부산 해운대구 구남로 15 1층"],
       ["엄용백 豬肉湯飯・海雲台店", "엄용백 돼지국밥 해운대점", "부산 해운대구 구남로24번길 39 1층"],
+      ["水邊最高豬肉湯飯 海雲臺店", "수변최고돼지국밥 해운대점", "부산 해운대구 구남로 39"],
     ],
   );
 });
@@ -246,7 +247,7 @@ test("September 1 offers both Haeundae pork-soup restaurants with separate addre
 test("restaurant checklist deduplicates repeated choices and excludes generic meals", () => {
   const restaurants = buildRestaurantChecklist(tripDays);
 
-  assert.equal(restaurants.length, 13);
+  assert.equal(restaurants.length, 14);
   assert.ok(!restaurants.some(({ title }) => title.includes("自由選") || title === "自理"));
   assert.deepEqual(
     restaurants.find(({ title }) => title === "烤肉的男子 廣安里店").dates,
@@ -296,8 +297,8 @@ test("overview keeps meal choices and separates fixed commitments", () => {
   const rows = buildOverviewRows(tripDays);
   const haeundae = rows.find(({ date }) => date === "9/1");
 
-  assert.equal(haeundae.lunch.label, "2 選 1");
-  assert.deepEqual(haeundae.lunch.items, ["海雲台五福豬肉湯飯", "엄용백 豬肉湯飯・海雲台店"]);
+  assert.equal(haeundae.lunch.label, "3 選 1");
+  assert.deepEqual(haeundae.lunch.items, ["海雲台五福豬肉湯飯", "엄용백 豬肉湯飯・海雲台店", "水邊最高豬肉湯飯 海雲臺店"]);
   assert.deepEqual(haeundae.fixed, ["09:30–10:00 天空膠囊列車"]);
   assert.ok(haeundae.morning.some((entry) => entry.title === "DIART Coffee" && entry.time === "10:20"));
 });
