@@ -311,12 +311,12 @@ test("overview matrix transposes dates into columns and itinerary sections into 
   assert.deepEqual(matrix.sections[0].cells, ["抵達釜山", "松島・南浦", "海雲台", "影島・西面", "機張", "廣安里", "回程"]);
 });
 
-test("seven-day overview uses expandable sections with horizontal scrolling only", () => {
+test("seven-day overview keeps one complete table with horizontal scrolling only", () => {
   const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
   const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
 
-  assert.match(appSource, /<details class="overview-section">/);
-  assert.match(appSource, /<summary><span>\$\{section\.label\}<\/span>/);
-  assert.match(css, /\.overview-section__table-wrap\s*\{[^}]*overflow-x:\s*auto;[^}]*overflow-y:\s*hidden;/s);
+  assert.match(appSource, /<table class="overview-table">/);
+  assert.doesNotMatch(appSource, /<details class="overview-section">/);
+  assert.match(css, /\.overview-table-wrap\s*\{[^}]*overflow-x:\s*auto;[^}]*overflow-y:\s*hidden;/s);
   assert.doesNotMatch(css, /\.overview-table-wrap\s*\{[^}]*(?:height|max-height):/s);
 });
