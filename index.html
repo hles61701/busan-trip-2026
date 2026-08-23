@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#073b4c">
+  <title>釜山七日｜海風行程簿</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section class="auth-gate" id="authGate" aria-labelledby="authTitle">
+    <div class="auth-gate__sun" aria-hidden="true"></div>
+    <form class="auth-card" id="authForm">
+      <p class="eyebrow">PRIVATE TRIP · BUSAN</p>
+      <h1 id="authTitle">一起，<br><em>住進海風裡。</em></h1>
+      <p class="auth-card__intro">這是朋友限定的釜山行程簿，請輸入共用密碼。</p>
+      <label for="tripPassword">行程密碼</label>
+      <div class="auth-field">
+        <input id="tripPassword" name="password" type="password" inputmode="numeric" autocomplete="current-password" required aria-describedby="authError">
+        <button type="button" id="togglePassword" aria-label="顯示密碼">顯示</button>
+      </div>
+      <p class="auth-error" id="authError" role="alert"></p>
+      <button class="auth-submit" type="submit">打開行程簿</button>
+      <small>登入狀態只會記在這台裝置上。</small>
+    </form>
+  </section>
+
+  <div class="app-shell" id="appShell" hidden>
+  <header class="hero">
+    <div class="hero__sun" aria-hidden="true"></div>
+    <p class="eyebrow">BUSAN · 2026</p>
+    <h1>七日，<br><em>住進海風裡。</em></h1>
+    <p class="hero__dates">08.30 — 09.05</p>
+    <div class="stay-card">
+      <div><span>STAY</span><strong>廣安 KCC Harbor View</strong><small>부산 수영구 민락수변로 49</small></div>
+      <button class="icon-button" data-copy="부산 수영구 민락수변로 49" aria-label="複製住宿地址">複製</button>
+    </div>
+    <button class="lock-button" id="lockButton" type="button">重新鎖定</button>
+  </header>
+
+  <nav class="view-tabs" aria-label="選擇內容">
+    <button class="view-tab is-active" data-view="itinerary" aria-pressed="true">每日行程</button>
+    <button class="view-tab" data-view="overview" aria-pressed="false">七日總覽</button>
+    <button class="view-tab" data-view="checklist" aria-pressed="false">旅行 Checklist</button>
+  </nav>
+
+  <nav class="day-tabs" id="dayTabs" aria-label="選擇日期"></nav>
+
+  <main id="dayView" class="day-view" aria-live="polite"></main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite">已複製韓文地址</div>
+  </div>
+
+  <template id="placeActionsTemplate">
+    <div class="place-actions">
+      <button class="place-action place-action--copy">複製地址</button>
+      <a class="place-action place-action--kakao" target="_blank" rel="noreferrer">Kakao</a>
+      <a class="place-action place-action--google" target="_blank" rel="noreferrer">Google</a>
+    </div>
+  </template>
+
+  <script type="module" src="js/app.mjs"></script>
+</body>
+</html>
