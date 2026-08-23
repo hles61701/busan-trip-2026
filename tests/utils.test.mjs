@@ -309,3 +309,10 @@ test("overview matrix transposes dates into columns and itinerary sections into 
   assert.deepEqual(matrix.sections.map(({ label }) => label), ["區域", "上午", "午餐", "下午／晚間", "晚餐", "固定事項"]);
   assert.deepEqual(matrix.sections[0].cells, ["抵達釜山", "松島・南浦", "海雲台", "影島・西面", "機張", "廣安里", "回程"]);
 });
+
+test("seven-day overview uses a fixed viewport-relative height", () => {
+  const css = readFileSync(new URL("../styles.css", import.meta.url), "utf8");
+
+  assert.match(css, /\.overview-table-wrap\s*\{[^}]*height:\s*72svh;/s);
+  assert.doesNotMatch(css, /\.overview-table-wrap\s*\{[^}]*max-height:/s);
+});

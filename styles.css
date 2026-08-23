@@ -162,7 +162,7 @@ button { font: inherit; }
 .overview-heading { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
 .overview-heading h2 { margin: 0; font: 34px/1.05 var(--serif); }
 .overview-heading > p:last-child { margin: 10px 0 0; color: #48666e; font-size: 12px; }
-.overview-table-wrap { overflow: auto; max-height: 72vh; border: 1px solid var(--line); background: rgba(255,255,255,.42); box-shadow: 0 12px 30px rgba(8,63,82,.08); overscroll-behavior: contain; }
+.overview-table-wrap { overflow: auto; height: 72svh; border: 1px solid var(--line); background: rgba(255,255,255,.42); box-shadow: 0 12px 30px rgba(8,63,82,.08); overscroll-behavior: contain; }
 .overview-table { width: 100%; min-width: 1450px; border-collapse: separate; border-spacing: 0; table-layout: fixed; font-size: 12px; line-height: 1.45; }
 .overview-table th, .overview-table td { padding: 12px; vertical-align: top; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: rgba(251,244,232,.9); }
 .overview-table thead th { position: sticky; z-index: 3; top: 0; color: white; background: var(--ink); font-size: 11px; letter-spacing: .08em; text-align: left; }
