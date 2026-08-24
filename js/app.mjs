@@ -4,7 +4,7 @@ import { verifyPassword } from "./auth.mjs";
 import { createChecklistSync, singleFlight, syncStatusText } from "./checklist-sync.mjs";
 import { createSupabaseChecklistRemote, ensureAnonymousSession } from "./supabase-checklist.mjs";
 import { supabaseConfig } from "./supabase-config.mjs";
-import { createMessageBoardRemote, escapeHtml } from "./message-board.mjs";
+import { createMessageBoardRemote, escapeHtml, resolveNickname } from "./message-board.mjs";
 
 const passwordHash = "ae54d4164552347bce0ab77dc1655cad425a78b5fe390a7c3ecd5c62ff12ad91";
 const authStorageKey = "busan-trip-auth-v1";
@@ -32,7 +32,7 @@ let messageError = "";
 let messageSubmitting = false;
 const messageBusyIds = new Set();
 const messageDraft = {
-  nickname: localStorage.getItem(nicknameStorageKey) ?? "",
+  nickname: resolveNickname(localStorage.getItem(nicknameStorageKey)),
   tripDate: "all",
   body: "",
 };

@@ -8,6 +8,10 @@ export function escapeHtml(value) {
   })[character]);
 }
 
+export function resolveNickname(savedNickname) {
+  return savedNickname || "anonymous";
+}
+
 export function normalizeMessages(rows, currentUserId) {
   return rows.map((row) => {
     const likes = row.trip_message_likes ?? [];

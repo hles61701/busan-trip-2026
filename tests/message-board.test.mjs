@@ -2,6 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { createMessageBoardRemote, escapeHtml, normalizeMessages } from "../js/message-board.mjs";
+import * as messageBoard from "../js/message-board.mjs";
+
+test("a first-time visitor starts with anonymous while a saved nickname wins", () => {
+  assert.equal(messageBoard.resolveNickname(null), "anonymous");
+  assert.equal(messageBoard.resolveNickname("Wei"), "Wei");
+});
 
 test("message text is escaped before it is rendered into the page", () => {
   assert.equal(
