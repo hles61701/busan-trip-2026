@@ -309,15 +309,19 @@ test("optional shopping reminders sit under the nearest itinerary destinations",
   const haeundaeDay = tripDays.find((day) => day.date === "9/1");
   const nampoDay = tripDays.find((day) => day.date === "8/31");
   const seomyeonDay = tripDays.find((day) => day.date === "9/2");
+  const gwanganDay = tripDays.find((day) => day.date === "9/4");
   const mipoReturn = haeundaeDay.events.find(({ title }) => title === "海岸列車回程");
   const nampoStop = nampoDay.events.find(({ title }) => title === "富平罐頭市場");
   const seomyeonStop = seomyeonDay.events.find(({ title }) => title === "西面市區");
+  const gwanganWalk = gwanganDay.events.find(({ title }) => title === "廣安里最後散步");
 
   assert.deepEqual(mipoReturn.nearby.map(({ name }) => name), ["老虎冰淇淋大福"]);
   assert.equal(mipoReturn.nearby[0].place.nameKo, "호랑이젤라떡 해운대본점");
   assert.deepEqual(nampoStop.nearby.map(({ name }) => name), ["ept Busan Gwangbok", "永一寢具"]);
   assert.equal(nampoStop.nearby[1].place.nameKo, "영일침구");
   assert.deepEqual(seomyeonStop.nearby.map(({ name }) => name), ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"]);
+  assert.deepEqual(gwanganWalk.nearby.map(({ name }) => name), ["BLUELAB Pharmacy／Wellness Shopping Mall"]);
+  assert.equal(gwanganWalk.nearby[0].place.address, "부산 수영구 남천바다로 38");
   for (const shop of [...nampoStop.nearby, ...seomyeonStop.nearby]) {
     assert.match(shop.place.address, /^부산/);
   }

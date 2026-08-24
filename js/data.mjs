@@ -128,7 +128,9 @@ export const tripDays = [
       { time: "10:30", title: "醫美預約", subtitle: "前後避免曝曬，實際時間依預約調整。" },
       { time: "13:30", title: "樂天超市補貨", subtitle: "只買清單上的伴手禮，預留整理行李空間。", place: place("樂天超市 光復店", "롯데마트 광복점", "부산 중구 중앙대로 2") },
       { time: "17:00", title: "Millac the Market", subtitle: "看海、喝飲料，等光線慢慢變藍。", place: place("Millac the Market", "밀락더마켓", "부산 수영구 민락수변로17번길 56") },
-      { time: "19:30", title: "廣安里最後散步", subtitle: "不排下一站，好好收尾。", place: place("廣安里海水浴場", "광안리해수욕장", "부산 수영구 광안해변로 219") },
+      { time: "19:30", title: "廣安里最後散步", subtitle: "不排下一站，好好收尾。", nearby: [
+        nearbyShop("BLUELAB Pharmacy／Wellness Shopping Mall", "블루랩 약국", "부산 수영구 남천바다로 38"),
+      ], place: place("廣安里海水浴場", "광안리해수욕장", "부산 수영구 광안해변로 219") },
     ],
     lunchTime: "12:30", dinnerTime: "18:30",
     lunch: [item("廣安里自由選", "醫美結束後就近吃，避免空腹逛超市。", stay)],
