@@ -14,6 +14,15 @@ export function buildKakaoTaxiUrl() {
   return "kakaot://taxi";
 }
 
+export function buildUberUrl(place) {
+  const url = new URL("https://m.uber.com/ul/");
+  url.searchParams.set("action", "setPickup");
+  url.searchParams.set("pickup", "my_location");
+  url.searchParams.set("dropoff[nickname]", place.nameKo);
+  url.searchParams.set("dropoff[formatted_address]", place.address);
+  return url.toString();
+}
+
 export function buildTimeline(day) {
   const meals = [
     day.lunch?.length ? { time: day.lunchTime ?? "12:00", kind: "lunch", title: "午餐", options: day.lunch } : null,

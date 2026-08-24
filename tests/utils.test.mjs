@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, mealDisplayMode } from "../js/utils.mjs";
+import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "../js/utils.mjs";
 import { tripDays } from "../js/data.mjs";
 import { hashPassword, verifyPassword } from "../js/auth.mjs";
 
@@ -43,11 +43,28 @@ test("Kakao T link opens the taxi screen", () => {
   assert.equal(buildKakaoTaxiUrl(), "kakaot://taxi");
 });
 
+test("Uber link uses current location and prefills the Korean destination", () => {
+  const url = new URL(buildUberUrl(samplePlace));
+
+  assert.equal(url.origin + url.pathname, "https://m.uber.com/ul/");
+  assert.equal(url.searchParams.get("action"), "setPickup");
+  assert.equal(url.searchParams.get("pickup"), "my_location");
+  assert.equal(url.searchParams.get("dropoff[nickname]"), samplePlace.nameKo);
+  assert.equal(url.searchParams.get("dropoff[formatted_address]"), samplePlace.address);
+});
+
 test("place actions include a Kakao T button that copies the destination", () => {
   const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
 
   assert.match(appSource, /data-taxi-copy="\$\{place\.address\}"/);
   assert.match(appSource, />Kakao T<\/a>/);
+});
+
+test("place actions include an Uber destination button", () => {
+  const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
+
+  assert.match(appSource, /href="\$\{buildUberUrl\(place\)\}"/);
+  assert.match(appSource, />Uber<\/a>/);
 });
 
 test("the itinerary includes all seven dates and both return-flight times", () => {

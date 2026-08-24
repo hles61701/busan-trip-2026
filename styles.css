@@ -96,6 +96,7 @@ button { font: inherit; }
 .place-action--kakao { border-color: #f2da00; background: #fee500; }
 .place-action--google { color: white; border-color: var(--sea); background: var(--sea); }
 .place-action--taxi { color: white; border-color: #18181b; background: #18181b; }
+.place-action--uber { color: #18181b; border-color: #18181b; background: white; }
 
 .timeline-item--lunch::before { background: var(--yellow); box-shadow: 0 0 0 1px var(--yellow); }
 .timeline-item--dinner::before { background: var(--sea); box-shadow: 0 0 0 1px var(--sea); }
