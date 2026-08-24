@@ -298,7 +298,8 @@ test("optional shopping reminders sit under the nearest itinerary destinations",
 
   assert.deepEqual(mipoReturn.nearby.map(({ name }) => name), ["老虎冰淇淋大福"]);
   assert.equal(mipoReturn.nearby[0].place.nameKo, "호랑이젤라떡 해운대본점");
-  assert.deepEqual(nampoStop.nearby.map(({ name }) => name), ["ept Busan Gwangbok"]);
+  assert.deepEqual(nampoStop.nearby.map(({ name }) => name), ["ept Busan Gwangbok", "永一寢具"]);
+  assert.equal(nampoStop.nearby[1].place.nameKo, "영일침구");
   assert.deepEqual(seomyeonStop.nearby.map(({ name }) => name), ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"]);
   for (const shop of [...nampoStop.nearby, ...seomyeonStop.nearby]) {
     assert.match(shop.place.address, /^부산/);
