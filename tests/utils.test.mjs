@@ -289,11 +289,15 @@ test("Old Mansion uses the verified Jeonpo address", () => {
 });
 
 test("optional shopping reminders sit under the nearest itinerary destinations", () => {
+  const haeundaeDay = tripDays.find((day) => day.date === "9/1");
   const nampoDay = tripDays.find((day) => day.date === "8/31");
   const seomyeonDay = tripDays.find((day) => day.date === "9/2");
+  const mipoReturn = haeundaeDay.events.find(({ title }) => title === "海岸列車回程");
   const nampoStop = nampoDay.events.find(({ title }) => title === "富平罐頭市場");
   const seomyeonStop = seomyeonDay.events.find(({ title }) => title === "西面市區");
 
+  assert.deepEqual(mipoReturn.nearby.map(({ name }) => name), ["老虎冰淇淋大福"]);
+  assert.equal(mipoReturn.nearby[0].place.nameKo, "호랑이젤라떡 해운대본점");
   assert.deepEqual(nampoStop.nearby.map(({ name }) => name), ["ept Busan Gwangbok"]);
   assert.deepEqual(seomyeonStop.nearby.map(({ name }) => name), ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"]);
   for (const shop of [...nampoStop.nearby, ...seomyeonStop.nearby]) {

@@ -56,7 +56,7 @@ export const tripDays = [
       { time: "08:20", title: "自然島鹽麵包", subtitle: "早點抵達，買完沿海邊走向尾浦站。", place: place("自然島鹽麵包", "자연도소금빵 해운대점", "부산 해운대구 구남로24번길 11") },
       { time: "09:30", endTime: "10:00", fixed: true, title: "天空膠囊列車", subtitle: "尾浦出發・第 3 場入場，時間依已購票券固定。", ticketLabel: "已購票・固定時間", place: place("藍線公園尾浦站", "해운대블루라인파크 미포정거장", "부산 해운대구 달맞이길62번길 13") },
       { time: "10:20", title: "DIART Coffee", subtitle: "蜂蜜奶油麵包與咖啡，坐下休息。", place: place("DIART Coffee", "디아트커피", "부산 해운대구 청사포로128번길 12") },
-      { time: "13:20", title: "海岸列車回程", subtitle: "青沙浦 → 尾浦，沿途看海。", passGroup: "B", place: place("青沙浦站", "청사포정거장", "부산 해운대구 청사포로 116") },
+      { time: "13:20", title: "海岸列車回程", subtitle: "青沙浦 → 尾浦，沿途看海。", passGroup: "B", nearby: [nearbyShop("老虎冰淇淋大福", "호랑이젤라떡 해운대본점", "부산 해운대구 달맞이길62번길 38 1층 115호, 116호")], place: place("青沙浦站", "청사포정거장", "부산 해운대구 청사포로 116") },
       { time: "15:00", title: "海理團路", subtitle: "小店散步，不設採買目標。", place: place("海理團路", "해리단길", "부산 해운대구 우동1로 38") },
       { time: "17:00", title: "新世界百貨", subtitle: "室內休息與補貨，依體力提早回住宿。", place: place("新世界 Centum City", "신세계백화점 센텀시티점", "부산 해운대구 센텀남대로 35") },
     ],
