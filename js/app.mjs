@@ -33,6 +33,9 @@ function saveChecklist(items) {
 
 function actions(place) {
   if (!place) return "";
+  const catchtableAction = place.catchtableUrl
+    ? `<a class="place-action place-action--catchtable" href="${place.catchtableUrl}" target="_blank" rel="noreferrer">Catchtable</a>`
+    : "";
   return `<p class="address">${place.address}</p>
     <div class="place-actions">
       <button class="place-action place-action--copy" data-copy="${place.address}">複製地址</button>
@@ -40,6 +43,7 @@ function actions(place) {
       <a class="place-action place-action--google" href="${buildGoogleUrl(place)}" target="_blank" rel="noreferrer">Google</a>
       <a class="place-action place-action--taxi" href="${buildKakaoTaxiUrl()}" data-taxi-copy="${place.address}">Kakao T</a>
       <a class="place-action place-action--uber" href="${buildUberUrl(place)}" target="_blank" rel="noreferrer">Uber</a>
+      ${catchtableAction}
     </div>`;
 }
 

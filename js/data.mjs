@@ -1,4 +1,4 @@
-const place = (name, nameKo, address) => ({ name, nameKo, address });
+const place = (name, nameKo, address, links = {}) => ({ name, nameKo, address, ...links });
 const item = (title, subtitle, location) => ({
   title,
   subtitle,
@@ -26,7 +26,9 @@ export const tripDays = [
     lunchTime: "12:00", dinnerTime: "19:30",
     lunch: [{ title: "自理", subtitle: "機場或登機前吃飽。" }],
     dinner: [
-      item("Tonshou 炸豬排", "抵達仍有精神就去；尖峰可能候位。", place("Tonshou 廣安店", "톤쇼우 광안점", "부산 수영구 광안해변로279번길 13")),
+      item("Tonshou 炸豬排", "抵達仍有精神就去；尖峰可能候位。", place("Tonshou 廣安店", "톤쇼우 광안점", "부산 수영구 광안해변로279번길 13", {
+        catchtableUrl: "https://app.catchtable.co.kr/ct/shop/tonshou__gwangan",
+      })),
       item("PURADAK 炸雞", "累了就外帶回住宿，最舒服的第一晚。", place("PURADAK 民樂店", "푸라닭 부산민락점", "부산 수영구 광안해변로 446 상가건물 4호")),
     ],
   },
@@ -89,7 +91,9 @@ export const tripDays = [
     ],
     lunchTime: "12:00", dinnerTime: "18:30",
     lunch: [item("大海鮑魚粥・釜山站直營店", "約 12:00 入座，吃完再往西面移動。", place("大海鮑魚粥・釜山站直營店", "바다마루전복죽 부산역 직영점", "부산 동구 중앙대로226번길 3-7 1층"))],
-    dinner: [item("Old Mansion 西面田浦店", "燒肉後再決定是否上荒嶺山。", place("Old Mansion 田浦店", "올드맨션 전포점", "부산 부산진구 전포대로209번길 39"))],
+    dinner: [item("Old Mansion 西面田浦店", "燒肉後再決定是否上荒嶺山。", place("Old Mansion 田浦店", "올드맨션 전포점", "부산 부산진구 전포대로209번길 17-6 1층", {
+      catchtableUrl: "https://www.catchtable.net/discovery/ja-JP/%E9%9F%93%E5%9B%BD%E8%A5%BF%E9%9D%A2%E3%81%AE%E5%BF%85%E8%A8%AA%E7%82%AD%E7%81%AB%E7%84%BC%E3%81%8D%E8%B1%9A%E8%82%89%E5%BA%9710%E9%81%B8.html",
+    }))],
   },
   {
     date: "9/3", weekday: "四", kicker: "機張", title: "速度感之後，整個人慢下來",

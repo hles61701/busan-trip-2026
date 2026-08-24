@@ -67,6 +67,15 @@ test("place actions include an Uber destination button", () => {
   assert.match(appSource, />Uber<\/a>/);
 });
 
+test("place actions show Catchtable only when a restaurant has a confirmed link", () => {
+  const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
+
+  assert.match(appSource, /place\.catchtableUrl\s*\?/);
+  assert.match(appSource, /class="place-action place-action--catchtable"/);
+  assert.match(appSource, /href="\$\{place\.catchtableUrl\}"/);
+  assert.match(appSource, />Catchtable<\/a>/);
+});
+
 test("the itinerary includes all seven dates and both return-flight times", () => {
   assert.deepEqual(
     tripDays.map((day) => day.date),
@@ -270,6 +279,22 @@ test("September 1 offers all three Haeundae pork-soup restaurants with separate 
       ["水邊最高豬肉湯飯 海雲臺店", "수변최고돼지국밥 해운대점", "부산 해운대구 구남로 39"],
     ],
   );
+});
+
+test("Old Mansion uses the verified Jeonpo address", () => {
+  const jeonpoDay = tripDays.find((day) => day.date === "9/2");
+  const oldMansion = jeonpoDay.dinner.find(({ title }) => title.includes("Old Mansion"));
+
+  assert.equal(oldMansion.place.address, "부산 부산진구 전포대로209번길 17-6 1층");
+});
+
+test("confirmed Catchtable restaurants include their jump links", () => {
+  const restaurants = tripDays.flatMap((day) => [...day.lunch, ...day.dinner]);
+  const tonshou = restaurants.find(({ title }) => title.includes("Tonshou"));
+  const oldMansion = restaurants.find(({ title }) => title.includes("Old Mansion"));
+
+  assert.equal(tonshou.place.catchtableUrl, "https://app.catchtable.co.kr/ct/shop/tonshou__gwangan");
+  assert.match(oldMansion.place.catchtableUrl, /^https:\/\/www\.catchtable\.net\/discovery\//);
 });
 
 test("restaurant checklist deduplicates repeated choices and excludes generic meals", () => {
