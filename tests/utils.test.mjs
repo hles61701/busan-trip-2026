@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { buildAttractionChecklist, buildGoogleUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, mealDisplayMode } from "../js/utils.mjs";
+import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, mealDisplayMode } from "../js/utils.mjs";
 import { tripDays } from "../js/data.mjs";
 import { hashPassword, verifyPassword } from "../js/auth.mjs";
 
@@ -37,6 +37,17 @@ test("Google link searches the Korean place name and address", () => {
     buildGoogleUrl(samplePlace),
     "https://www.google.com/maps/search/?api=1&query=%EA%B0%90%EC%B2%9C%EB%AC%B8%ED%99%94%EB%A7%88%EC%9D%84%20%EB%B6%80%EC%82%B0%20%EC%82%AC%ED%95%98%EA%B5%AC%20%EA%B0%90%EB%82%B42%EB%A1%9C%20203",
   );
+});
+
+test("Kakao T link opens the taxi screen", () => {
+  assert.equal(buildKakaoTaxiUrl(), "kakaot://taxi");
+});
+
+test("place actions include a Kakao T button that copies the destination", () => {
+  const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
+
+  assert.match(appSource, /data-taxi-copy="\$\{place\.address\}"/);
+  assert.match(appSource, />Kakao T<\/a>/);
 });
 
 test("the itinerary includes all seven dates and both return-flight times", () => {

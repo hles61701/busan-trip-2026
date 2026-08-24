@@ -1,5 +1,5 @@
 import { tripDays } from "./data.mjs";
-import { buildAttractionChecklist, buildGoogleUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, mealDisplayMode } from "./utils.mjs";
+import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, mealDisplayMode } from "./utils.mjs";
 import { verifyPassword } from "./auth.mjs";
 
 const passwordHash = "ae54d4164552347bce0ab77dc1655cad425a78b5fe390a7c3ecd5c62ff12ad91";
@@ -38,6 +38,7 @@ function actions(place) {
       <button class="place-action place-action--copy" data-copy="${place.address}">複製地址</button>
       <a class="place-action place-action--kakao" href="${buildKakaoUrl(place)}" target="_blank" rel="noreferrer">Kakao</a>
       <a class="place-action place-action--google" href="${buildGoogleUrl(place)}" target="_blank" rel="noreferrer">Google</a>
+      <a class="place-action place-action--taxi" href="${buildKakaoTaxiUrl()}" data-taxi-copy="${place.address}">Kakao T</a>
     </div>`;
 }
 
@@ -245,6 +246,8 @@ document.addEventListener("click", (event) => {
   }
   const copyButton = event.target.closest("[data-copy]");
   if (copyButton) copyAddress(copyButton.dataset.copy);
+  const taxiButton = event.target.closest("[data-taxi-copy]");
+  if (taxiButton) copyAddress(taxiButton.dataset.taxiCopy);
 });
 
 document.addEventListener("change", (event) => {

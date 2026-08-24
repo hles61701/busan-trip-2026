@@ -10,6 +10,10 @@ export function buildGoogleUrl(place) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeQuery(place))}`;
 }
 
+export function buildKakaoTaxiUrl() {
+  return "kakaot://taxi";
+}
+
 export function buildTimeline(day) {
   const meals = [
     day.lunch?.length ? { time: day.lunchTime ?? "12:00", kind: "lunch", title: "午餐", options: day.lunch } : null,

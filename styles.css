@@ -95,6 +95,7 @@ button { font: inherit; }
 .place-action { display: inline-flex; min-height: 36px; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 999px; padding: 7px 12px; color: var(--ink); background: white; font-size: 12px; font-weight: 700; text-decoration: none; }
 .place-action--kakao { border-color: #f2da00; background: #fee500; }
 .place-action--google { color: white; border-color: var(--sea); background: var(--sea); }
+.place-action--taxi { color: white; border-color: #18181b; background: #18181b; }
 
 .timeline-item--lunch::before { background: var(--yellow); box-shadow: 0 0 0 1px var(--yellow); }
 .timeline-item--dinner::before { background: var(--sea); box-shadow: 0 0 0 1px var(--sea); }
