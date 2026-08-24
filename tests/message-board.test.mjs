@@ -97,31 +97,30 @@ test("liking and unliking use the user-message pair", async () => {
   ]);
 });
 
-test("deleting a message includes its author id", async () => {
+test("deleting a message is available to any trip member", async () => {
   let filter;
   const client = {
     from: () => ({
       delete: () => ({
-        eq: (firstColumn, firstValue) => ({
-          eq: async (secondColumn, secondValue) => {
-            filter = [firstColumn, firstValue, secondColumn, secondValue];
-            return { error: null };
-          },
-        }),
+        eq: async (column, value) => {
+          filter = [column, value];
+          return { error: null };
+        },
       }),
     }),
   };
 
   await createMessageBoardRemote(client, "friend-a").remove("message-1");
 
-  assert.deepEqual(filter, ["id", "message-1", "user_id", "friend-a"]);
+  assert.deepEqual(filter, ["id", "message-1"]);
+  assert.equal(messageBoard.canDeleteMessage(), true);
 });
 
-test("database policies bind message and like writes to the signed-in user", () => {
+test("database policies let trip members delete messages while protecting other writes", () => {
   const sql = readFileSync(new URL("../supabase/message-board.sql", import.meta.url), "utf8");
 
   assert.match(sql, /trip_messages for insert[\s\S]*user_id = \(select auth\.uid\(\)\)/);
-  assert.match(sql, /trip_messages for delete[\s\S]*user_id = \(select auth\.uid\(\)\)/);
+  assert.match(sql, /trip_messages for delete[^;]*trip_id = 'busan-2026'/);
   assert.match(sql, /trip_message_likes for insert[\s\S]*user_id = \(select auth\.uid\(\)\)/);
   assert.match(sql, /trip_message_likes for delete[\s\S]*user_id = \(select auth\.uid\(\)\)/);
 });

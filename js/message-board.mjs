@@ -12,6 +12,10 @@ export function resolveNickname(savedNickname) {
   return savedNickname || "anonymous";
 }
 
+export function canDeleteMessage() {
+  return true;
+}
+
 export function normalizeMessages(rows, currentUserId) {
   return rows.map((row) => {
     const likes = row.trip_message_likes ?? [];
@@ -57,8 +61,7 @@ export function createMessageBoardRemote(client, currentUserId, tripId = "busan-
       const { error } = await client
         .from("trip_messages")
         .delete()
-        .eq("id", messageId)
-        .eq("user_id", currentUserId);
+        .eq("id", messageId);
       throwIfError(error);
     },
     async like(messageId) {

@@ -39,9 +39,10 @@ with check (
 );
 
 drop policy if exists "Trip members can delete their own messages" on public.trip_messages;
-create policy "Trip members can delete their own messages"
+drop policy if exists "Trip members can delete messages" on public.trip_messages;
+create policy "Trip members can delete messages"
 on public.trip_messages for delete to authenticated
-using (user_id = (select auth.uid()));
+using (trip_id = 'busan-2026');
 
 drop policy if exists "Trip members can read likes" on public.trip_message_likes;
 create policy "Trip members can read likes"
