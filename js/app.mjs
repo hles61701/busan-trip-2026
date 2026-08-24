@@ -4,6 +4,7 @@ import { verifyPassword } from "./auth.mjs";
 import { createChecklistSync, singleFlight, syncStatusText } from "./checklist-sync.mjs";
 import { createSupabaseChecklistRemote, ensureAnonymousSession } from "./supabase-checklist.mjs";
 import { supabaseConfig } from "./supabase-config.mjs";
+import { createMessageBoardRemote, escapeHtml } from "./message-board.mjs";
 
 const passwordHash = "ae54d4164552347bce0ab77dc1655cad425a78b5fe390a7c3ecd5c62ff12ad91";
 const authStorageKey = "busan-trip-auth-v1";
@@ -23,6 +24,31 @@ let checklistType = "restaurants";
 const checklistStorageKey = "busan-trip-checklist-v1";
 let checklistSync = null;
 let checklistConnectionStatus = "local";
+const nicknameStorageKey = "busan-trip-nickname-v1";
+let messageRemote = null;
+let messages = [];
+let messageStatus = "local";
+let messageError = "";
+let messageSubmitting = false;
+const messageBusyIds = new Set();
+const messageDraft = {
+  nickname: localStorage.getItem(nicknameStorageKey) ?? "",
+  tripDate: "all",
+  body: "",
+};
+let supabaseConnection = null;
+
+async function performSupabaseConnection() {
+  if (supabaseConnection) return supabaseConnection;
+  if (!window.supabase?.createClient) throw new Error("Supabase library unavailable");
+  const client = window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey);
+  const session = await ensureAnonymousSession(client);
+  if (!session?.user?.id) throw new Error("Anonymous session unavailable");
+  supabaseConnection = { client, session };
+  return supabaseConnection;
+}
+
+const connectSupabase = singleFlight(performSupabaseConnection);
 
 function readChecklist() {
   try {
@@ -48,9 +74,7 @@ async function performChecklistCloudConnection() {
   checklistConnectionStatus = "local";
   if (activeView === "checklist") renderChecklist({ scrollToTop: false });
   try {
-    if (!window.supabase?.createClient) throw new Error("Supabase library unavailable");
-    const client = window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey);
-    await ensureAnonymousSession(client);
+    const { client } = await connectSupabase();
     checklistSync = createChecklistSync({
       storage: localStorage,
       remote: createSupabaseChecklistRemote(client),
@@ -238,6 +262,100 @@ function renderChecklist({ scrollToTop = true } = {}) {
   if (scrollToTop) window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+const messageDateOptions = [
+  ["all", "全行程"], ["8/30", "8/30"], ["8/31", "8/31"], ["9/1", "9/1"],
+  ["9/2", "9/2"], ["9/3", "9/3"], ["9/4", "9/4"], ["9/5", "9/5"],
+];
+
+function formatMessageTime(value) {
+  return new Intl.DateTimeFormat("zh-TW", {
+    month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit",
+  }).format(new Date(value));
+}
+
+function messageStatusText() {
+  if (messageStatus === "synced") return "雲端已同步";
+  if (messageStatus === "offline") return "目前離線，暫時無法留言";
+  return "正在連線";
+}
+
+function renderMessages({ scrollToTop = true } = {}) {
+  const canPost = messageStatus === "synced" && navigator.onLine && Boolean(messageRemote);
+  const cards = messages.length
+    ? messages.map((message) => `<article class="message-card">
+        <div class="message-card__meta">
+          <span class="message-card__date">${message.tripDate === "all" ? "全行程" : escapeHtml(message.tripDate)}</span>
+          <span class="message-card__author">${escapeHtml(message.nickname)}</span>
+          <time datetime="${escapeHtml(message.createdAt)}">${formatMessageTime(message.createdAt)}</time>
+        </div>
+        <p class="message-card__body">${escapeHtml(message.body)}</p>
+        <div class="message-card__actions">
+          <button class="message-action message-action--like ${message.liked ? "is-liked" : ""}" type="button" data-message-like="${escapeHtml(message.id)}" aria-pressed="${message.liked}" ${messageBusyIds.has(message.id) ? "disabled" : ""}>${message.liked ? "♥" : "♡"} ${message.likeCount}</button>
+          ${message.isOwn ? `<button class="message-action message-action--delete" type="button" data-message-delete="${escapeHtml(message.id)}" ${messageBusyIds.has(message.id) ? "disabled" : ""}>刪除</button>` : ""}
+        </div>
+      </article>`).join("")
+    : `<div class="message-empty">還沒有留言，先留下第一句旅伴提醒吧。</div>`;
+
+  view.innerHTML = `
+    <section class="message-heading">
+      <p class="eyebrow">TRIP NOTES · JUST FOR US</p>
+      <h2>旅伴留言</h2>
+      <p>提醒、分工、臨時想去的地方，都放在這裡。</p>
+    </section>
+    <form class="message-form" id="messageForm">
+      <div class="message-form__row">
+        <label class="message-field">暱稱
+          <input name="nickname" maxlength="20" autocomplete="nickname" value="${escapeHtml(messageDraft.nickname)}" placeholder="怎麼稱呼你？" required>
+        </label>
+        <label class="message-field">行程日期
+          <select name="tripDate">${messageDateOptions.map(([value, label]) => `<option value="${value}" ${messageDraft.tripDate === value ? "selected" : ""}>${label}</option>`).join("")}</select>
+        </label>
+      </div>
+      <label class="message-field">留言
+        <textarea name="body" maxlength="500" placeholder="例如：膠囊列車票我保管。" required>${escapeHtml(messageDraft.body)}</textarea>
+      </label>
+      <div class="message-form__footer">
+        <span class="message-count">${messageDraft.body.length} / 500</span>
+        <button class="message-submit" type="submit" ${messageSubmitting || !canPost ? "disabled" : ""}>${messageSubmitting ? "發布中…" : "發布留言"}</button>
+      </div>
+      ${messageError ? `<p class="message-error" role="alert">${escapeHtml(messageError)}</p>` : ""}
+    </form>
+    <div class="message-board-status"><span>${messageStatusText()}</span><button class="message-refresh" type="button" data-message-refresh>重新整理</button></div>
+    <section class="message-list" aria-label="旅伴留言列表">${cards}</section>`;
+  if (scrollToTop) window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+async function performMessageConnection() {
+  messageStatus = "local";
+  if (activeView === "messages") renderMessages({ scrollToTop: false });
+  try {
+    const { client, session } = await connectSupabase();
+    messageRemote = createMessageBoardRemote(client, session.user.id);
+    messages = await messageRemote.load();
+    messageStatus = "synced";
+    messageError = "";
+  } catch {
+    messageStatus = "offline";
+    messageError = "留言板暫時連不上，請稍後再試。";
+  }
+  if (activeView === "messages") renderMessages({ scrollToTop: false });
+}
+
+const connectMessageBoard = singleFlight(performMessageConnection);
+
+async function refreshMessages() {
+  if (!messageRemote) return connectMessageBoard();
+  try {
+    messages = await messageRemote.load();
+    messageStatus = "synced";
+    messageError = "";
+  } catch {
+    messageStatus = "offline";
+    messageError = "留言更新失敗，請檢查網路。";
+  }
+  if (activeView === "messages") renderMessages({ scrollToTop: false });
+}
+
 function renderView() {
   tabs.hidden = activeView !== "itinerary";
   document.querySelectorAll("[data-view]").forEach((button) => {
@@ -247,7 +365,8 @@ function renderView() {
   });
   if (activeView === "itinerary") renderDay();
   else if (activeView === "overview") renderOverview();
-  else renderChecklist();
+  else if (activeView === "checklist") renderChecklist();
+  else renderMessages();
 }
 
 async function copyAddress(value) {
@@ -265,12 +384,13 @@ async function copyAddress(value) {
   window.setTimeout(() => toast.classList.remove("is-visible"), 1600);
 }
 
-document.addEventListener("click", (event) => {
+document.addEventListener("click", async (event) => {
   const viewButton = event.target.closest("[data-view]");
   if (viewButton) {
     activeView = viewButton.dataset.view;
     renderView();
     if (activeView === "checklist") refreshChecklistCloud();
+    if (activeView === "messages") refreshMessages();
     return;
   }
   const checklistButton = event.target.closest("[data-checklist-type]");
@@ -298,9 +418,72 @@ document.addEventListener("click", (event) => {
   if (copyButton) copyAddress(copyButton.dataset.copy);
   const taxiButton = event.target.closest("[data-taxi-copy]");
   if (taxiButton) copyAddress(taxiButton.dataset.taxiCopy);
+  const refreshButton = event.target.closest("[data-message-refresh]");
+  if (refreshButton) {
+    await refreshMessages();
+    return;
+  }
+  const likeButton = event.target.closest("[data-message-like]");
+  if (likeButton && messageRemote) {
+    const message = messages.find(({ id }) => id === likeButton.dataset.messageLike);
+    if (!message) return;
+    messageBusyIds.add(message.id);
+    renderMessages({ scrollToTop: false });
+    let actionError = "";
+    try {
+      if (message.liked) await messageRemote.unlike(message.id);
+      else await messageRemote.like(message.id);
+    } catch {
+      actionError = "按讚更新失敗，請再試一次。";
+    } finally {
+      messageBusyIds.delete(message.id);
+      await refreshMessages();
+      if (actionError) {
+        messageError = actionError;
+        renderMessages({ scrollToTop: false });
+      }
+    }
+    return;
+  }
+  const deleteButton = event.target.closest("[data-message-delete]");
+  if (deleteButton && messageRemote) {
+    if (!window.confirm("確定要刪除這則留言嗎？")) return;
+    const messageId = deleteButton.dataset.messageDelete;
+    messageBusyIds.add(messageId);
+    renderMessages({ scrollToTop: false });
+    let actionError = "";
+    try {
+      await messageRemote.remove(messageId);
+    } catch {
+      actionError = "留言刪除失敗，請再試一次。";
+    } finally {
+      messageBusyIds.delete(messageId);
+      await refreshMessages();
+      if (actionError) {
+        messageError = actionError;
+        renderMessages({ scrollToTop: false });
+      }
+    }
+  }
+});
+
+document.addEventListener("input", (event) => {
+  if (event.target.matches('#messageForm [name="nickname"]')) {
+    messageDraft.nickname = event.target.value;
+    localStorage.setItem(nicknameStorageKey, messageDraft.nickname);
+  }
+  if (event.target.matches('#messageForm [name="body"]')) {
+    messageDraft.body = event.target.value;
+    const count = document.querySelector(".message-count");
+    if (count) count.textContent = `${messageDraft.body.length} / 500`;
+  }
 });
 
 document.addEventListener("change", async (event) => {
+  if (event.target.matches('#messageForm [name="tripDate"]')) {
+    messageDraft.tripDate = event.target.value;
+    return;
+  }
   const checkbox = event.target.closest("[data-check-id]");
   if (!checkbox) return;
   if (checklistSync) {
@@ -317,6 +500,42 @@ document.addEventListener("change", async (event) => {
   renderChecklist({ scrollToTop: false });
 });
 
+document.addEventListener("submit", async (event) => {
+  if (event.target.id !== "messageForm") return;
+  event.preventDefault();
+  if (!navigator.onLine || messageStatus !== "synced" || !messageRemote) {
+    messageStatus = "offline";
+    messageError = "目前離線，留言內容已保留，連線後再發布。";
+    renderMessages({ scrollToTop: false });
+    return;
+  }
+  const nickname = messageDraft.nickname.trim();
+  const body = messageDraft.body.trim();
+  if (!nickname || !body) {
+    messageError = "請填寫暱稱與留言內容。";
+    renderMessages({ scrollToTop: false });
+    return;
+  }
+  messageSubmitting = true;
+  messageError = "";
+  renderMessages({ scrollToTop: false });
+  try {
+    if (!messageRemote) await connectMessageBoard();
+    if (!messageRemote) throw new Error("Message board unavailable");
+    await messageRemote.create({ nickname, tripDate: messageDraft.tripDate, body });
+    messageDraft.nickname = nickname;
+    messageDraft.body = "";
+    localStorage.setItem(nicknameStorageKey, nickname);
+    await refreshMessages();
+  } catch {
+    messageStatus = "offline";
+    messageError = "留言發布失敗，內容已保留，請稍後再試。";
+  } finally {
+    messageSubmitting = false;
+    if (activeView === "messages") renderMessages({ scrollToTop: false });
+  }
+});
+
 function unlockApp() {
   authGate.hidden = true;
   appShell.hidden = false;
@@ -327,14 +546,21 @@ function unlockApp() {
 }
 
 document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") refreshChecklistCloud();
+  if (document.visibilityState !== "visible") return;
+  refreshChecklistCloud();
+  if (activeView === "messages") refreshMessages();
 });
 
-window.addEventListener("online", refreshChecklistCloud);
+window.addEventListener("online", () => {
+  refreshChecklistCloud();
+  if (activeView === "messages") refreshMessages();
+});
 window.addEventListener("offline", () => {
   checklistConnectionStatus = "offline";
   checklistSync?.markOffline();
+  messageStatus = "offline";
   if (activeView === "checklist") renderChecklist({ scrollToTop: false });
+  if (activeView === "messages") renderMessages({ scrollToTop: false });
 });
 
 authForm.addEventListener("submit", async (event) => {

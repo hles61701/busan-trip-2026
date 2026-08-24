@@ -54,7 +54,7 @@ button { font: inherit; }
 .icon-button { flex: 0 0 auto; border: 0; border-radius: 999px; padding: 8px 12px; color: var(--deep); background: #ffdd9a; font-size: 12px; font-weight: 700; }
 .lock-button { position: relative; z-index: 2; margin-top: 10px; border: 0; padding: 5px 0; color: rgba(255,255,255,.58); background: transparent; font-size: 10px; text-decoration: underline; text-underline-offset: 3px; }
 
-.view-tabs { display: grid; grid-template-columns: repeat(3, 1fr); max-width: 760px; margin: 0 auto; padding: 14px 18px 0; background: var(--paper); }
+.view-tabs { display: grid; grid-template-columns: repeat(4, 1fr); max-width: 760px; margin: 0 auto; padding: 14px 18px 0; background: var(--paper); }
 .view-tab { position: relative; min-height: 44px; border: 0; border-bottom: 1px solid var(--line); color: #687c81; background: transparent; font-size: 12px; font-weight: 800; letter-spacing: .08em; }
 .view-tab::after { content: ""; position: absolute; right: 0; bottom: -1px; left: 0; height: 5px; background: transparent; }
 .view-tab.is-active { color: var(--ink); }
@@ -171,6 +171,40 @@ button { font: inherit; }
 .checklist-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-height: 23px; color: #687c81; font-size: 10px; font-weight: 800; letter-spacing: .06em; }
 .checklist-item .address { margin-top: 8px !important; }
 .checklist-item .place-actions { margin-top: 8px; }
+
+.message-heading { margin-bottom: 18px; }
+.message-heading h2 { margin: 0; font: 34px/1.05 var(--serif); }
+.message-heading > p:last-child { margin: 9px 0 0; color: #48666e; font-size: 12px; }
+.message-form { display: grid; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 3px 22px 3px 22px; background: linear-gradient(145deg, rgba(255,255,255,.72), var(--foam)); }
+.message-form__row { display: grid; grid-template-columns: minmax(0,1fr) 112px; gap: 10px; }
+.message-field { display: grid; gap: 6px; color: var(--ink); font-size: 11px; font-weight: 800; }
+.message-field input, .message-field select, .message-field textarea { width: 100%; border: 1px solid var(--line); border-radius: 3px 12px 3px 12px; padding: 11px 12px; color: var(--ink); background: rgba(255,255,255,.88); font: 14px/1.5 inherit; outline: none; }
+.message-field textarea { min-height: 108px; resize: vertical; }
+.message-field input:focus, .message-field select:focus, .message-field textarea:focus { border-color: var(--sea); box-shadow: 0 0 0 3px rgba(9,126,143,.1); }
+.message-form__footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.message-count { color: #687c81; font-size: 10px; }
+.message-submit, .message-refresh { border: 0; border-radius: 999px; padding: 10px 16px; color: white; background: var(--sea); font-size: 12px; font-weight: 800; }
+.message-submit:disabled, .message-action:disabled { opacity: .5; }
+.message-board-status { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0 10px; color: #687c81; font-size: 11px; }
+.message-refresh { padding: 7px 11px; color: var(--sea); border: 1px solid var(--line); background: transparent; }
+.message-error { margin: 0; color: #a7422d; font-size: 11px; font-weight: 700; }
+.message-list { display: grid; gap: 12px; }
+.message-card { padding: 17px; border: 1px solid var(--line); border-radius: 3px 18px 3px 18px; background: rgba(255,255,255,.54); }
+.message-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; color: #687c81; font-size: 10px; }
+.message-card__date { padding: 3px 7px; border-radius: 999px; color: #855033; background: var(--sand); font-weight: 800; }
+.message-card__author { color: var(--ink); font-weight: 900; }
+.message-card__body { margin: 12px 0 14px; color: var(--ink); font-size: 15px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
+.message-card__actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.message-action { border: 0; padding: 6px 0; color: #687c81; background: transparent; font-size: 11px; font-weight: 800; }
+.message-action--like.is-liked { color: var(--coral); }
+.message-action--delete { color: #9c503b; text-decoration: underline; text-underline-offset: 3px; }
+.message-empty { padding: 30px 18px; border: 1px dashed var(--line); color: #687c81; text-align: center; font-size: 12px; }
+
+@media (max-width: 430px) {
+  .view-tabs { padding-inline: 8px; }
+  .view-tab { font-size: 10px; letter-spacing: .03em; }
+  .message-form__row { grid-template-columns: 1fr; }
+}
 
 .overview-heading { margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
 .overview-heading h2 { margin: 0; font: 34px/1.05 var(--serif); }
