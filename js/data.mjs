@@ -121,6 +121,7 @@ export const tripDays = [
     pace: "留白日・不跨區", weather: "下雨就把海灘改為 Millac the Market，採買行程照走。",
     photo: "傍晚從民樂水邊往廣安大橋拍，留一張大家自然聊天的合照。",
     events: [
+      { time: "09:00", title: "All Sunday 廣安店", subtitle: "麵包與咖啡當早餐，吃完再前往醫美預約。", restaurant: true, place: place("All Sunday 廣安店", "올선데이 광안점", "부산 수영구 광안로61번길 28 1층") },
       { time: "10:30", title: "醫美預約", subtitle: "前後避免曝曬，實際時間依預約調整。" },
       { time: "13:30", title: "樂天超市補貨", subtitle: "只買清單上的伴手禮，預留整理行李空間。", place: place("樂天超市 光復店", "롯데마트 광복점", "부산 중구 중앙대로 2") },
       { time: "17:00", title: "Millac the Market", subtitle: "看海、喝飲料，等光線慢慢變藍。", place: place("Millac the Market", "밀락더마켓", "부산 수영구 민락수변로17번길 56") },
@@ -132,7 +133,6 @@ export const tripDays = [
       item("烤肉的男子 廣安里店", "專人代烤豬肉，適合正式吃一頓晚餐。", place("烤肉的男子 廣安里店", "고기굽는남자 광안리점", "부산 수영구 광남로 44 1층")),
       item("彥陽烤肉・釜山家", "傳統韓牛烤肉，想吃牛肉選這間。", place("彥陽烤肉・釜山家", "광안리 언양불고기 부산집", "부산 수영구 남천바다로 32")),
       item("尾浦家 廣安里店", "海鮮醬與鍋飯，適合不想再吃烤肉。", place("尾浦家 廣安里店", "미포집 광안리점", "부산 수영구 광안해변로 153-1 2층")),
-      item("All Sunday 廣安店", "貝果與咖啡，適合想輕鬆收尾。", place("All Sunday 廣安店", "올선데이 광안점", "부산 수영구 광안로61번길 28 1층")),
     ],
   },
   {

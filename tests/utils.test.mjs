@@ -160,11 +160,11 @@ test("only multi-choice meals use a collapsible list", () => {
   assert.equal(mealDisplayMode([{ title: "選擇一" }, { title: "選擇二" }]), "toggle");
 });
 
-test("the final-night restaurant choices each have their own address", () => {
+test("the three final-night dinner choices each have their own address", () => {
   const finalNight = tripDays.find((day) => day.date === "9/4");
 
-  assert.equal(finalNight.dinner.length, 4);
-  assert.equal(new Set(finalNight.dinner.map(({ place }) => place.address)).size, 4);
+  assert.equal(finalNight.dinner.length, 3);
+  assert.equal(new Set(finalNight.dinner.map(({ place }) => place.address)).size, 3);
   assert.ok(finalNight.dinner.every(({ place }) => place.address !== "부산 수영구 민락수변로 49"));
 });
 
@@ -318,6 +318,17 @@ test("confirmed Catchtable restaurants include their jump links", () => {
 
   assert.equal(tonshou.place.catchtableUrl, "https://app.catchtable.co.kr/ct/shop/tonshou__gwangan");
   assert.match(oldMansion.place.catchtableUrl, /^https:\/\/www\.catchtable\.net\/discovery\//);
+});
+
+test("All Sunday is breakfast on September 4 instead of a dinner choice", () => {
+  const gwanganDay = tripDays.find((day) => day.date === "9/4");
+  const breakfast = gwanganDay.events.find(({ title }) => title === "All Sunday 廣安店");
+
+  assert.equal(breakfast.time, "09:00");
+  assert.equal(breakfast.restaurant, true);
+  assert.ok(!gwanganDay.dinner.some(({ title }) => title.includes("All Sunday")));
+  assert.ok(buildOverviewRows(tripDays).find(({ date }) => date === "9/4").morning.some(({ title }) => title === "All Sunday 廣安店"));
+  assert.ok(buildRestaurantChecklist(tripDays).some(({ title }) => title === "All Sunday 廣安店"));
 });
 
 test("restaurant checklist deduplicates repeated choices and excludes generic meals", () => {

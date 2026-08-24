@@ -114,7 +114,7 @@ function mergeChecklistItems(entries) {
 
 export function buildRestaurantChecklist(days) {
   const genericTitles = new Set(["自理", "Outlet 內自由選", "廣安里自由選"]);
-  const entries = days.flatMap((day) => [...(day.lunch ?? []), ...(day.dinner ?? [])]
+  const entries = days.flatMap((day) => [...(day.lunch ?? []), ...(day.dinner ?? []), ...day.events.filter(({ restaurant }) => restaurant)]
     .filter((meal) => meal.place && !genericTitles.has(meal.title))
     .map((meal) => ({ ...meal, date: day.date })));
 
