@@ -10,6 +10,10 @@ export function buildGoogleUrl(place) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(placeQuery(place))}`;
 }
 
+export function buildNaverUrl(place) {
+  return `https://map.naver.com/p/search/${encodeURIComponent(placeQuery(place))}`;
+}
+
 export function buildKakaoTaxiUrl() {
   return "kakaot://taxi";
 }

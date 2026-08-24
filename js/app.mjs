@@ -1,5 +1,5 @@
 import { tripDays } from "./data.mjs";
-import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "./utils.mjs";
+import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildNaverUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "./utils.mjs";
 import { verifyPassword } from "./auth.mjs";
 
 const passwordHash = "ae54d4164552347bce0ab77dc1655cad425a78b5fe390a7c3ecd5c62ff12ad91";
@@ -39,7 +39,7 @@ function actions(place) {
   return `<p class="address">${place.address}</p>
     <div class="place-actions">
       <button class="place-action place-action--copy" data-copy="${place.address}">複製地址</button>
-      <a class="place-action place-action--kakao" href="${buildKakaoUrl(place)}" target="_blank" rel="noreferrer">Kakao</a>
+      <a class="place-action place-action--naver" href="${buildNaverUrl(place)}" target="_blank" rel="noreferrer">NAVER</a>
       <a class="place-action place-action--google" href="${buildGoogleUrl(place)}" target="_blank" rel="noreferrer">Google</a>
       <a class="place-action place-action--taxi" href="${buildKakaoTaxiUrl()}" data-taxi-copy="${place.address}">Kakao T</a>
       <a class="place-action place-action--uber" href="${buildUberUrl(place)}" target="_blank" rel="noreferrer">Uber</a>

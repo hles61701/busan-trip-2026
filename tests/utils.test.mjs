@@ -1,9 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "../js/utils.mjs";
+import * as utils from "../js/utils.mjs";
 import { tripDays } from "../js/data.mjs";
 import { hashPassword, verifyPassword } from "../js/auth.mjs";
+
+const { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } = utils;
 
 test("shared password is accepted only when its SHA-256 hash matches", async () => {
   const expectedHash = await hashPassword("example-password");
@@ -39,6 +41,13 @@ test("Google link searches the Korean place name and address", () => {
   );
 });
 
+test("NAVER link searches the Korean place name and address", () => {
+  assert.equal(
+    utils.buildNaverUrl(samplePlace),
+    "https://map.naver.com/p/search/%EA%B0%90%EC%B2%9C%EB%AC%B8%ED%99%94%EB%A7%88%EC%9D%84%20%EB%B6%80%EC%82%B0%20%EC%82%AC%ED%95%98%EA%B5%AC%20%EA%B0%90%EB%82%B42%EB%A1%9C%20203",
+  );
+});
+
 test("Kakao T link opens the taxi screen", () => {
   assert.equal(buildKakaoTaxiUrl(), "kakaot://taxi");
 });
@@ -65,6 +74,14 @@ test("place actions include an Uber destination button", () => {
 
   assert.match(appSource, /href="\$\{buildUberUrl\(place\)\}"/);
   assert.match(appSource, />Uber<\/a>/);
+});
+
+test("place actions use NAVER and omit the Kakao Map button", () => {
+  const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
+
+  assert.match(appSource, /href="\$\{buildNaverUrl\(place\)\}"/);
+  assert.match(appSource, />NAVER<\/a>/);
+  assert.doesNotMatch(appSource, /href="\$\{buildKakaoUrl\(place\)\}"/);
 });
 
 test("place actions show Catchtable only when a restaurant has a confirmed link", () => {
