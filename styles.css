@@ -150,6 +150,10 @@ button { font: inherit; }
 .checklist-heading__row { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
 .checklist-heading h2 { margin: 0; font: 32px/1 var(--serif); }
 .checklist-heading__row > span { color: var(--sun); font: 18px var(--serif); }
+.checklist-sync-status { display: inline-flex; align-items: center; gap: 7px; margin: 10px 0 0; color: var(--muted); font-size: 12px; font-weight: 800; letter-spacing: .08em; }
+.checklist-sync-status::before { width: 8px; height: 8px; border-radius: 50%; background: var(--sun); content: ""; }
+.checklist-sync-status[data-sync-status="synced"]::before { background: #26856f; }
+.checklist-sync-status[data-sync-status="offline"]::before { background: var(--coral); }
 .checklist-types { display: flex; gap: 8px; margin-top: 18px; }
 .checklist-type { min-width: 90px; min-height: 40px; border: 1px solid var(--line); border-radius: 3px 13px 3px 13px; color: var(--ink); background: transparent; font-size: 12px; font-weight: 800; }
 .checklist-type.is-active { color: white; border-color: var(--sea); background: var(--sea); }

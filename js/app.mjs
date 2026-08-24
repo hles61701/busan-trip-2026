@@ -1,6 +1,9 @@
 import { tripDays } from "./data.mjs";
 import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildNaverUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "./utils.mjs";
 import { verifyPassword } from "./auth.mjs";
+import { createChecklistSync, singleFlight, syncStatusText } from "./checklist-sync.mjs";
+import { createSupabaseChecklistRemote, ensureAnonymousSession } from "./supabase-checklist.mjs";
+import { supabaseConfig } from "./supabase-config.mjs";
 
 const passwordHash = "ae54d4164552347bce0ab77dc1655cad425a78b5fe390a7c3ecd5c62ff12ad91";
 const authStorageKey = "busan-trip-auth-v1";
@@ -18,6 +21,8 @@ let activeIndex = 0;
 let activeView = "itinerary";
 let checklistType = "restaurants";
 const checklistStorageKey = "busan-trip-checklist-v1";
+let checklistSync = null;
+let checklistConnectionStatus = "local";
 
 function readChecklist() {
   try {
@@ -29,6 +34,41 @@ function readChecklist() {
 
 function saveChecklist(items) {
   localStorage.setItem(checklistStorageKey, JSON.stringify([...items]));
+}
+
+function currentChecklist() {
+  return checklistSync?.read() ?? readChecklist();
+}
+
+function cloudStatus() {
+  return syncStatusText(checklistSync?.status() ?? checklistConnectionStatus);
+}
+
+async function performChecklistCloudConnection() {
+  checklistConnectionStatus = "local";
+  if (activeView === "checklist") renderChecklist({ scrollToTop: false });
+  try {
+    if (!window.supabase?.createClient) throw new Error("Supabase library unavailable");
+    const client = window.supabase.createClient(supabaseConfig.url, supabaseConfig.publishableKey);
+    await ensureAnonymousSession(client);
+    checklistSync = createChecklistSync({
+      storage: localStorage,
+      remote: createSupabaseChecklistRemote(client),
+    });
+    await checklistSync.connect();
+  } catch {
+    checklistSync = null;
+    checklistConnectionStatus = "offline";
+  }
+  if (activeView === "checklist") renderChecklist({ scrollToTop: false });
+}
+
+const connectChecklistCloud = singleFlight(performChecklistCloudConnection);
+
+async function refreshChecklistCloud() {
+  if (!checklistSync) return connectChecklistCloud();
+  await checklistSync.refresh();
+  if (activeView === "checklist") renderChecklist({ scrollToTop: false });
 }
 
 function actions(place) {
@@ -161,7 +201,7 @@ function renderOverview() {
 }
 
 function renderChecklist({ scrollToTop = true } = {}) {
-  const completed = readChecklist();
+  const completed = currentChecklist();
   const items = checklistType === "restaurants"
     ? buildRestaurantChecklist(tripDays)
     : buildAttractionChecklist(tripDays);
@@ -172,6 +212,7 @@ function renderChecklist({ scrollToTop = true } = {}) {
     <section class="checklist-heading">
       <p class="eyebrow">SAVE · TASTE · VISIT</p>
       <div class="checklist-heading__row"><h2>旅行 Checklist</h2><span>${completedCount} / ${items.length}</span></div>
+      <p class="checklist-sync-status" data-sync-status="${checklistSync?.status() ?? checklistConnectionStatus}">${cloudStatus()}</p>
       <div class="checklist-types" role="group" aria-label="清單分類">
         <button class="checklist-type ${checklistType === "restaurants" ? "is-active" : ""}" data-checklist-type="restaurants">餐廳</button>
         <button class="checklist-type ${checklistType === "attractions" ? "is-active" : ""}" data-checklist-type="attractions">景點</button>
@@ -229,6 +270,7 @@ document.addEventListener("click", (event) => {
   if (viewButton) {
     activeView = viewButton.dataset.view;
     renderView();
+    if (activeView === "checklist") refreshChecklistCloud();
     return;
   }
   const checklistButton = event.target.closest("[data-checklist-type]");
@@ -258,9 +300,16 @@ document.addEventListener("click", (event) => {
   if (taxiButton) copyAddress(taxiButton.dataset.taxiCopy);
 });
 
-document.addEventListener("change", (event) => {
+document.addEventListener("change", async (event) => {
   const checkbox = event.target.closest("[data-check-id]");
   if (!checkbox) return;
+  if (checklistSync) {
+    const update = checklistSync.setChecked(checkbox.dataset.checkId, checkbox.checked);
+    renderChecklist({ scrollToTop: false });
+    await update;
+    renderChecklist({ scrollToTop: false });
+    return;
+  }
   const completed = readChecklist();
   if (checkbox.checked) completed.add(checkbox.dataset.checkId);
   else completed.delete(checkbox.dataset.checkId);
@@ -274,7 +323,19 @@ function unlockApp() {
   document.body.classList.add("is-authenticated");
   renderTabs();
   renderView();
+  connectChecklistCloud();
 }
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") refreshChecklistCloud();
+});
+
+window.addEventListener("online", refreshChecklistCloud);
+window.addEventListener("offline", () => {
+  checklistConnectionStatus = "offline";
+  checklistSync?.markOffline();
+  if (activeView === "checklist") renderChecklist({ scrollToTop: false });
+});
 
 authForm.addEventListener("submit", async (event) => {
   event.preventDefault();
