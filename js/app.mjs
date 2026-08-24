@@ -61,7 +61,10 @@ function eventContent(event) {
       : event.ticketLabel
         ? `<span class="event-status ${event.fixed ? "event-status--fixed" : ""}">${event.ticketLabel}</span>`
         : "";
-    return `<div class="event-title-row"><h3>${event.title}</h3>${badge}</div><p>${event.subtitle}</p>${actions(event.place)}`;
+    const nearby = event.nearby?.length
+      ? `<aside class="nearby-note"><span>附近順逛・可去可不去</span><ul>${event.nearby.map((shop) => `<li>${shop}</li>`).join("")}</ul></aside>`
+      : "";
+    return `<div class="event-title-row"><h3>${event.title}</h3>${badge}</div><p>${event.subtitle}</p>${actions(event.place)}${nearby}`;
   }
 
   const label = event.kind === "lunch" ? "午餐 · LUNCH" : "晚餐 · DINNER";

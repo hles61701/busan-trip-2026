@@ -97,6 +97,11 @@ button { font: inherit; }
 .place-action--google { color: white; border-color: var(--sea); background: var(--sea); }
 .place-action--taxi { color: white; border-color: #18181b; background: #18181b; }
 .place-action--uber { color: #18181b; border-color: #18181b; background: white; }
+.nearby-note { margin-top: 13px; padding: 11px 12px; border-left: 3px solid var(--sun); border-radius: 0 10px 10px 0; background: rgba(255,125,95,.08); }
+.nearby-note > span { display: block; color: #8b4a32; font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+.nearby-note ul { display: flex; flex-wrap: wrap; gap: 5px 12px; margin: 7px 0 0; padding: 0; list-style: none; }
+.nearby-note li { color: var(--ink); font-size: 12px; font-weight: 750; }
+.nearby-note li::before { content: "＋"; margin-right: 3px; color: var(--sun); }
 
 .timeline-item--lunch::before { background: var(--yellow); box-shadow: 0 0 0 1px var(--yellow); }
 .timeline-item--dinner::before { background: var(--sea); box-shadow: 0 0 0 1px var(--sea); }

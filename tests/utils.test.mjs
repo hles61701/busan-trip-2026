@@ -288,6 +288,24 @@ test("Old Mansion uses the verified Jeonpo address", () => {
   assert.equal(oldMansion.place.address, "부산 부산진구 전포대로209번길 17-6 1층");
 });
 
+test("optional shopping reminders sit under the nearest itinerary destinations", () => {
+  const nampoDay = tripDays.find((day) => day.date === "8/31");
+  const seomyeonDay = tripDays.find((day) => day.date === "9/2");
+  const nampoStop = nampoDay.events.find(({ title }) => title === "富平罐頭市場");
+  const seomyeonStop = seomyeonDay.events.find(({ title }) => title === "西面市區");
+
+  assert.deepEqual(nampoStop.nearby, ["ept Busan Gwangbok"]);
+  assert.deepEqual(seomyeonStop.nearby, ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"]);
+});
+
+test("nearby shopping reminders render as optional names without map actions", () => {
+  const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
+
+  assert.match(appSource, /附近順逛・可去可不去/);
+  assert.match(appSource, /event\.nearby\.map/);
+  assert.doesNotMatch(appSource, /actions\(event\.nearby/);
+});
+
 test("confirmed Catchtable restaurants include their jump links", () => {
   const restaurants = tripDays.flatMap((day) => [...day.lunch, ...day.dinner]);
   const tonshou = restaurants.find(({ title }) => title.includes("Tonshou"));
