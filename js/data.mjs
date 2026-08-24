@@ -1,4 +1,5 @@
 const place = (name, nameKo, address, links = {}) => ({ name, nameKo, address, ...links });
+const nearbyShop = (name, nameKo, address) => ({ name, place: place(name, nameKo, address) });
 const item = (title, subtitle, location) => ({
   title,
   subtitle,
@@ -39,7 +40,7 @@ export const tripDays = [
     events: [
       { time: "09:30", title: "甘川文化村", subtitle: "先走主稜線與小王子區，巷弄不要貪多。", place: place("甘川文化村", "감천문화마을", "부산 사하구 감내2로 203") },
       { time: "12:50", title: "BIFF 廣場糖餅", subtitle: "午餐後順路當甜點。", place: place("BIFF 廣場", "BIFF광장", "부산 중구 비프광장로 20") },
-      { time: "14:00", title: "富平罐頭市場", subtitle: "邊走邊吃，留一點胃口給晚餐。", nearby: ["ept Busan Gwangbok"], place: place("富平罐頭市場", "부평깡통시장", "부산 중구 부평1길 48") },
+      { time: "14:00", title: "富平罐頭市場", subtitle: "邊走邊吃，留一點胃口給晚餐。", nearby: [nearbyShop("ept Busan Gwangbok", "이피티 부산광복", "부산 중구 광복로 57-1 1~2층")], place: place("富平罐頭市場", "부평깡통시장", "부산 중구 부평1길 48") },
       { time: "16:00", title: "松島海上纜車", subtitle: "搭到岩南公園，海面色溫開始變柔。", passGroup: "B", place: place("松島海上纜車", "송도해상케이블카", "부산 서구 송도해변로 171") },
       { time: "17:10", title: "龍宮雲橋", subtitle: "視風勢與體力決定是否走完全程。", ticketLabel: "現場購票", place: place("松島龍宮雲橋", "송도용궁구름다리", "부산 서구 암남동 620-53") },
     ],
@@ -85,7 +86,11 @@ export const tripDays = [
     events: [
       { time: "09:30", title: "白淺灘文化村", subtitle: "沿上層步道慢走，下坡後不要勉強折返。", place: place("白淺灘文化村", "흰여울문화마을", "부산 영도구 절영로 194") },
       { time: "11:00", title: "海邊咖啡休息", subtitle: "把它當真正的停留，不只是打卡。", place: place("白淺灘隧道", "흰여울해안터널", "부산 영도구 영선동4가 1210-38") },
-      { time: "14:30", title: "西面市區", subtitle: "SPAO、MUSINSA 與地下街集中處理。", nearby: ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"], place: place("西面站", "서면역", "부산 부산진구 중앙대로 730") },
+      { time: "14:30", title: "西面市區", subtitle: "SPAO、MUSINSA 與地下街集中處理。", nearby: [
+        nearbyShop("KASINA 田浦", "카시나 전포", "부산 부산진구 서전로 44"),
+        nearbyShop("DAISO 釜山西面 1 號店", "다이소 부산서면1호점", "부산 부산진구 중앙대로702번길 43 지하 B1층"),
+        nearbyShop("SPAO 西面中央店", "스파오 서면중앙점", "부산 부산진구 중앙대로692번길 38"),
+      ], place: place("西面站", "서면역", "부산 부산진구 중앙대로 730") },
       { time: "16:30", title: "田浦咖啡街", subtitle: "選一間順眼的店坐下，不需要連跑。", place: place("田浦咖啡街", "전포카페거리", "부산 부산진구 전포대로209번길 26") },
       { time: "20:00", title: "荒嶺山夜景", subtitle: "天氣清楚再上山；雲厚就留在西面。", place: place("荒嶺山烽燧台", "황령산 봉수대", "부산 연제구 황령산로 391-39") },
     ],

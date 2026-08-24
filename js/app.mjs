@@ -62,7 +62,7 @@ function eventContent(event) {
         ? `<span class="event-status ${event.fixed ? "event-status--fixed" : ""}">${event.ticketLabel}</span>`
         : "";
     const nearby = event.nearby?.length
-      ? `<aside class="nearby-note"><span>附近順逛・可去可不去</span><ul>${event.nearby.map((shop) => `<li>${shop}</li>`).join("")}</ul></aside>`
+      ? `<aside class="nearby-note"><span>附近順逛・可去可不去</span><ul>${event.nearby.map((shop) => `<li><b>${shop.name}</b><a href="${buildGoogleUrl(shop.place)}" target="_blank" rel="noreferrer">Google Map</a></li>`).join("")}</ul></aside>`
       : "";
     return `<div class="event-title-row"><h3>${event.title}</h3>${badge}</div><p>${event.subtitle}</p>${actions(event.place)}${nearby}`;
   }

@@ -294,16 +294,21 @@ test("optional shopping reminders sit under the nearest itinerary destinations",
   const nampoStop = nampoDay.events.find(({ title }) => title === "富平罐頭市場");
   const seomyeonStop = seomyeonDay.events.find(({ title }) => title === "西面市區");
 
-  assert.deepEqual(nampoStop.nearby, ["ept Busan Gwangbok"]);
-  assert.deepEqual(seomyeonStop.nearby, ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"]);
+  assert.deepEqual(nampoStop.nearby.map(({ name }) => name), ["ept Busan Gwangbok"]);
+  assert.deepEqual(seomyeonStop.nearby.map(({ name }) => name), ["KASINA 田浦", "DAISO 釜山西面 1 號店", "SPAO 西面中央店"]);
+  for (const shop of [...nampoStop.nearby, ...seomyeonStop.nearby]) {
+    assert.match(shop.place.address, /^부산/);
+  }
 });
 
-test("nearby shopping reminders render as optional names without map actions", () => {
+test("nearby shopping reminders render names with Google Map only", () => {
   const appSource = readFileSync(new URL("../js/app.mjs", import.meta.url), "utf8");
 
   assert.match(appSource, /附近順逛・可去可不去/);
   assert.match(appSource, /event\.nearby\.map/);
-  assert.doesNotMatch(appSource, /actions\(event\.nearby/);
+  assert.match(appSource, /buildGoogleUrl\(shop\.place\)/);
+  assert.match(appSource, />Google Map<\/a>/);
+  assert.doesNotMatch(appSource, /actions\(shop\.place\)/);
 });
 
 test("confirmed Catchtable restaurants include their jump links", () => {
