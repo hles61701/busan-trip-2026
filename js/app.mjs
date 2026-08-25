@@ -1,5 +1,5 @@
 import { tripDays } from "./data.mjs";
-import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildNaverUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "./utils.mjs";
+import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildNaverUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode, mealDisplayTitle } from "./utils.mjs";
 import { createAuthPersistence, verifyPassword } from "./auth.mjs";
 import { createChecklistSync, singleFlight, syncStatusText } from "./checklist-sync.mjs";
 import { createSupabaseChecklistRemote, ensureAnonymousSession } from "./supabase-checklist.mjs";
@@ -135,7 +135,7 @@ function eventContent(event) {
   const label = event.kind === "lunch" ? "午餐 · LUNCH" : "晚餐 · DINNER";
   const options = event.options.map((meal, index) => `<div class="timeline-meal-option">
       ${event.options.length > 1 ? `<span class="choice-number">0${index + 1}</span>` : ""}
-      <div class="meal-title-row"><h3>${meal.title}</h3>${meal.reservationStatus ? `<span class="reservation-status">${meal.reservationStatus}</span>` : ""}</div>
+      <div class="meal-title-row"><h3>${mealDisplayTitle(meal)}</h3>${meal.reservationStatus ? `<span class="reservation-status">${meal.reservationStatus}</span>` : ""}</div>
       <p>${meal.subtitle}</p>${actions(meal.place)}
     </div>`).join("");
 
@@ -254,7 +254,7 @@ function renderChecklist({ scrollToTop = true } = {}) {
           </label>
           <div class="checklist-item__content">
             <div class="checklist-meta"><span>${item.dates.join("・")}</span>${checklistStatus(item)}</div>
-            <h3>${item.title}</h3>
+            <h3>${checklistType === "restaurants" ? mealDisplayTitle(item) : item.title}</h3>
             ${actions(item.place)}
           </div>
         </article>`;

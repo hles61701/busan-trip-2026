@@ -1,9 +1,10 @@
 const place = (name, nameKo, address, links = {}) => ({ name, nameKo, address, ...links });
 const nearbyShop = (name, nameKo, address) => ({ name, place: place(name, nameKo, address) });
-const item = (title, subtitle, location) => ({
+const item = (title, subtitle, location, recommended = false) => ({
   title,
   subtitle,
   place: location,
+  recommended,
   reservationStatus: "尚未訂位",
 });
 
@@ -30,7 +31,7 @@ export const tripDays = [
       item("Tonshou 炸豬排", "抵達仍有精神就去；尖峰可能候位。", place("Tonshou 廣安店", "톤쇼우 광안점", "부산 수영구 광안해변로279번길 13", {
         catchtableUrl: "https://app.catchtable.co.kr/ct/shop/tonshou__gwangan",
       })),
-      item("PURADAK 炸雞", "累了就外帶回住宿，最舒服的第一晚。", place("PURADAK 民樂店", "푸라닭 부산민락점", "부산 수영구 광안해변로 446 상가건물 4호")),
+      item("PURADAK 炸雞", "累了就外帶回住宿，最舒服的第一晚。", place("PURADAK 民樂店", "푸라닭 부산민락점", "부산 수영구 광안해변로 446 상가건물 4호"), true),
     ],
   },
   {
@@ -49,7 +50,7 @@ export const tripDays = [
     ],
     lunchTime: "11:30", dinnerTime: "19:00",
     lunch: [item("札嘎其魚市場 100／101 號", "約 11:30 入座，避開太晚才吃導致下午拖延。", place("札嘎其市場", "자갈치시장", "부산 중구 자갈치해안로 52"))],
-    dinner: [item("味贊王鹽烤肉 富平店", "市場散步後吃烤肉，結束直接回廣安里。", place("味贊王 富平店", "맛찬들왕소금구이 부평점", "부산 중구 광복로 3"))],
+    dinner: [item("味贊王鹽烤肉 富平店", "市場散步後吃烤肉，結束直接回廣安里。", place("味贊王 富平店", "맛찬들왕소금구이 부평점", "부산 중구 광복로 3"), true)],
   },
   {
     date: "9/1", weekday: "二", kicker: "海雲台", title: "把海岸線交給列車",
@@ -73,7 +74,7 @@ export const tripDays = [
       item("83 獬豸 廣安里店", "厚切豬肉，熱門時段可能候位。", place("83 獬豸 廣安里店", "83해치 광안리점", "부산 수영구 민락본동로19번길 59 1층")),
       item("烤肉的男子 廣安里店", "專人代烤，想吃豬五花可以選這間。", place("烤肉的男子 廣安里店", "고기굽는남자 광안리점", "부산 수영구 광남로 44 1층")),
       item("彥陽烤肉・釜山家", "傳統韓牛烤肉，適合想吃牛肉的晚上。", place("彥陽烤肉・釜山家", "광안리 언양불고기 부산집", "부산 수영구 남천바다로 32")),
-      item("尾浦家 廣安里店", "海鮮醬與鍋飯，口味和烤肉選項不同。", place("尾浦家 廣安里店", "미포집 광안리점", "부산 수영구 광안해변로 153-1 2층")),
+      item("尾浦家 廣安里店", "海鮮醬與鍋飯，口味和烤肉選項不同。", place("尾浦家 廣安里店", "미포집 광안리점", "부산 수영구 광안해변로 153-1 2층"), true),
     ],
   },
   {
@@ -101,7 +102,7 @@ export const tripDays = [
     lunch: [item("大海鮑魚粥・釜山站直營店", "約 12:00 入座，吃完再往西面移動。", place("大海鮑魚粥・釜山站直營店", "바다마루전복죽 부산역 직영점", "부산 동구 중앙대로226번길 3-7 1층"))],
     dinner: [item("Old Mansion 西面田浦店", "燒肉後再決定是否上荒嶺山。", place("Old Mansion 田浦店", "올드맨션 전포점", "부산 부산진구 전포대로209번길 17-6 1층", {
       catchtableUrl: "https://www.catchtable.net/discovery/ja-JP/%E9%9F%93%E5%9B%BD%E8%A5%BF%E9%9D%A2%E3%81%AE%E5%BF%85%E8%A8%AA%E7%82%AD%E7%81%AB%E7%84%BC%E3%81%8D%E8%B1%9A%E8%82%89%E5%BA%9710%E9%81%B8.html",
-    }))],
+    }), true)],
   },
   {
     date: "9/3", weekday: "四", kicker: "機張", title: "速度感之後，整個人慢下來",
@@ -115,7 +116,7 @@ export const tripDays = [
     lunchTime: "12:30", dinnerTime: "20:00",
     lunch: [item("Outlet 內自由選", "12:30 左右先吃，避免逛到忘記時間。", place("樂天東釜山餐飲區", "롯데프리미엄아울렛 동부산점", "부산 기장군 기장읍 기장해안로 147"))],
     dinner: [
-      item("PURADAK 炸雞 民樂店", "Spa Land 後累了，外帶回住宿最省力。", place("PURADAK 民樂店", "푸라닭 부산민락점", "부산 수영구 광안해변로 446 상가건물 4호")),
+      item("PURADAK 炸雞 民樂店", "Spa Land 後累了，外帶回住宿最省力。", place("PURADAK 民樂店", "푸라닭 부산민락점", "부산 수영구 광안해변로 446 상가건물 4호"), true),
       item("烤肉的男子 廣安里店", "仍有體力就坐下來吃專人代烤。", place("烤肉的男子 廣安里店", "고기굽는남자 광안리점", "부산 수영구 광남로 44 1층")),
     ],
   },
@@ -136,7 +137,7 @@ export const tripDays = [
     lunch: [item("廣安里自由選", "醫美結束後就近吃，避免空腹逛超市。", stay)],
     dinner: [
       item("烤肉的男子 廣安里店", "專人代烤豬肉，適合正式吃一頓晚餐。", place("烤肉的男子 廣安里店", "고기굽는남자 광안리점", "부산 수영구 광남로 44 1층")),
-      item("彥陽烤肉・釜山家", "傳統韓牛烤肉，想吃牛肉選這間。", place("彥陽烤肉・釜山家", "광안리 언양불고기 부산집", "부산 수영구 남천바다로 32")),
+      item("彥陽烤肉・釜山家", "傳統韓牛烤肉，想吃牛肉選這間。", place("彥陽烤肉・釜山家", "광안리 언양불고기 부산집", "부산 수영구 남천바다로 32"), true),
       item("尾浦家 廣安里店", "海鮮醬與鍋飯，適合不想再吃烤肉。", place("尾浦家 廣安里店", "미포집 광안리점", "부산 수영구 광안해변로 153-1 2층")),
     ],
   },

@@ -196,6 +196,32 @@ test("every restaurant is explicitly marked as not reserved", () => {
   assert.ok(restaurants.every(({ reservationStatus }) => reservationStatus === "尚未訂位"));
 });
 
+test("each dinner night marks the agreed restaurant recommendation", () => {
+  const expected = new Map([
+    ["8/30", "PURADAK 炸雞"],
+    ["8/31", "味贊王鹽烤肉 富平店"],
+    ["9/1", "尾浦家 廣安里店"],
+    ["9/2", "Old Mansion 西面田浦店"],
+    ["9/3", "PURADAK 炸雞 民樂店"],
+    ["9/4", "彥陽烤肉・釜山家"],
+  ]);
+
+  for (const day of tripDays.filter(({ dinner }) => dinner.length)) {
+    assert.deepEqual(
+      day.dinner.filter(({ recommended }) => recommended).map(({ title }) => title),
+      [expected.get(day.date)],
+    );
+  }
+
+  const overview = buildOverviewRows(tripDays);
+  for (const day of overview.filter(({ dinner }) => dinner.items.length)) {
+    assert.ok(day.dinner.items.includes(`${expected.get(day.date)}（推薦）`));
+  }
+
+  const checklist = buildRestaurantChecklist(tripDays);
+  assert.equal(checklist.find(({ title }) => title === "彥陽烤肉・釜山家").recommended, true);
+});
+
 test("only multi-choice meals use a collapsible list", () => {
   assert.equal(mealDisplayMode([{ title: "唯一選擇" }]), "single");
   assert.equal(mealDisplayMode([{ title: "選擇一" }, { title: "選擇二" }]), "toggle");

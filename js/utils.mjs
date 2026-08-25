@@ -40,10 +40,14 @@ export function mealDisplayMode(meals) {
   return meals.length > 1 ? "toggle" : "single";
 }
 
+export function mealDisplayTitle(meal) {
+  return `${meal.title}${meal.recommended ? "（推薦）" : ""}`;
+}
+
 function overviewMeal(meals = []) {
   return {
     label: meals.length > 1 ? `${meals.length} 選 1` : meals.length === 1 ? "已安排" : "—",
-    items: meals.map(({ title }) => title),
+    items: meals.map(mealDisplayTitle),
   };
 }
 
@@ -99,6 +103,7 @@ function mergeChecklistItems(entries) {
     const existing = items.get(key);
     if (existing) {
       if (!existing.dates.includes(entry.date)) existing.dates.push(entry.date);
+      existing.recommended ||= entry.recommended ?? false;
       continue;
     }
     items.set(key, {
@@ -107,6 +112,7 @@ function mergeChecklistItems(entries) {
       place: entry.place,
       dates: [entry.date],
       reservationStatus: entry.reservationStatus,
+      recommended: entry.recommended ?? false,
       passGroup: entry.passGroup,
       ticketLabel: entry.ticketLabel,
       backup: entry.backup ?? false,
