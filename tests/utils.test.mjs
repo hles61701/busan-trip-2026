@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import * as utils from "../js/utils.mjs";
 import { tripDays } from "../js/data.mjs";
 import { hashPassword, verifyPassword } from "../js/auth.mjs";
+import * as auth from "../js/auth.mjs";
 
 const { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildKakaoUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } = utils;
 
@@ -13,6 +14,29 @@ test("shared password is accepted only when its SHA-256 hash matches", async () 
   assert.equal(await verifyPassword("example-password", expectedHash), true);
   assert.equal(await verifyPassword("wrong-password", expectedHash), false);
   assert.equal(await verifyPassword("", expectedHash), false);
+});
+
+test("login persists on this device and locking clears every stored login", () => {
+  const makeStorage = () => {
+    const values = new Map();
+    return {
+      getItem: (key) => values.get(key) ?? null,
+      setItem: (key, value) => values.set(key, value),
+      removeItem: (key) => values.delete(key),
+    };
+  };
+  const local = makeStorage();
+  const session = makeStorage();
+  const persistence = auth.createAuthPersistence(local, session, "trip-auth");
+
+  persistence.remember();
+  assert.equal(local.getItem("trip-auth"), "unlocked");
+  assert.equal(persistence.isUnlocked(), true);
+
+  persistence.forget();
+  assert.equal(local.getItem("trip-auth"), null);
+  assert.equal(session.getItem("trip-auth"), null);
+  assert.equal(persistence.isUnlocked(), false);
 });
 
 test("the app is configured with the shared password hash", async () => {

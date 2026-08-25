@@ -1,6 +1,6 @@
 import { tripDays } from "./data.mjs";
 import { buildAttractionChecklist, buildGoogleUrl, buildKakaoTaxiUrl, buildNaverUrl, buildOverviewMatrix, buildOverviewRows, buildRestaurantChecklist, buildTimeline, buildUberUrl, mealDisplayMode } from "./utils.mjs";
-import { verifyPassword } from "./auth.mjs";
+import { createAuthPersistence, verifyPassword } from "./auth.mjs";
 import { createChecklistSync, singleFlight, syncStatusText } from "./checklist-sync.mjs";
 import { createSupabaseChecklistRemote, ensureAnonymousSession } from "./supabase-checklist.mjs";
 import { supabaseConfig } from "./supabase-config.mjs";
@@ -8,6 +8,7 @@ import { canDeleteMessage, createMessageBoardRemote, escapeHtml, resolveNickname
 
 const passwordHash = "ae54d4164552347bce0ab77dc1655cad425a78b5fe390a7c3ecd5c62ff12ad91";
 const authStorageKey = "busan-trip-auth-v1";
+const authPersistence = createAuthPersistence(localStorage, sessionStorage, authStorageKey);
 const authGate = document.querySelector("#authGate");
 const authForm = document.querySelector("#authForm");
 const authError = document.querySelector("#authError");
@@ -571,7 +572,7 @@ authForm.addEventListener("submit", async (event) => {
     passwordInput.select();
     return;
   }
-  sessionStorage.setItem(authStorageKey, "unlocked");
+  authPersistence.remember();
   unlockApp();
 });
 
@@ -584,9 +585,9 @@ togglePassword.addEventListener("click", () => {
 });
 
 document.querySelector("#lockButton").addEventListener("click", () => {
-  sessionStorage.removeItem(authStorageKey);
+  authPersistence.forget();
   window.location.reload();
 });
 
-if (sessionStorage.getItem(authStorageKey) === "unlocked") unlockApp();
+if (authPersistence.isUnlocked()) unlockApp();
 else passwordInput.focus();
